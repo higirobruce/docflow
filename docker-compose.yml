@@ -24,17 +24,30 @@ services:
         DATABASE_URL: postgresql://postgres:postgres@db:5432/correspondence
         AUTH_SECRET: ${AUTH_SECRET:-change-me-in-production}
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    # ports:
+    #   - "3000:3000"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/correspondence
       AUTH_SECRET: ${AUTH_SECRET:-change-me-in-production}
       AUTH_TRUST_HOST: "true"
-      # Set this to your public URL if you face redirect issues, e.g., http://10.10.94.155:3000
-      AUTH_URL: ${AUTH_URL}
+      # Updated to use the https domain
+      AUTH_URL: ${AUTH_URL:-https://user-management.risa.gov.rw}
     depends_on:
       db:
         condition: service_healthy
+
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    links:
+      - app
+    restart: always
+    environment:
+      DOMAINS: 'user-management.risa.gov.rw -> http://app:3000'
+      # STAGE: 'local' # Use 'production' for live certificates, 'local' for self-signed
+      STAGE: 'production'
 
   # One-off service to push schema and seed data
   migrate:
