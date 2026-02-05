@@ -29,6 +29,9 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/correspondence
       AUTH_SECRET: ${AUTH_SECRET:-change-me-in-production}
+      AUTH_TRUST_HOST: "true"
+      # Set this to your public URL if you face redirect issues, e.g., http://10.10.94.155:3000
+      AUTH_URL: ${AUTH_URL}
     depends_on:
       db:
         condition: service_healthy
