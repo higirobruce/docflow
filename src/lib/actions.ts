@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '../db'
-import { correspondence, users, departments } from '../db/schema'
+import { correspondence, users, divisions } from '../db/schema'
 import { eq, desc, sql } from 'drizzle-orm'
 import { generateReferenceNumber } from './date-utils'
 import { revalidatePath } from 'next/cache'
@@ -31,17 +31,17 @@ export async function getCorrespondence() {
         name: users.name,
         email: users.email,
       },
-      department: {
-        id: departments.id,
-        name: departments.name,
-        code: departments.code,
+      division: {
+        id: divisions.id,
+        name: divisions.name,
+        code: divisions.code,
       },
       createdAt: correspondence.createdAt,
       updatedAt: correspondence.updatedAt,
     })
     .from(correspondence)
     .leftJoin(users, eq(correspondence.assignedToId, users.id))
-    .leftJoin(departments, eq(correspondence.departmentId, departments.id))
+    .leftJoin(divisions, eq(correspondence.divisionId, divisions.id))
     .orderBy(desc(correspondence.createdAt))
 
   return result
@@ -92,17 +92,17 @@ export async function getCorrespondenceById(id: number) {
         name: users.name,
         email: users.email,
       },
-      department: {
-        id: departments.id,
-        name: departments.name,
-        code: departments.code,
+      division: {
+        id: divisions.id,
+        name: divisions.name,
+        code: divisions.code,
       },
       createdAt: correspondence.createdAt,
       updatedAt: correspondence.updatedAt,
     })
     .from(correspondence)
     .leftJoin(users, eq(correspondence.assignedToId, users.id))
-    .leftJoin(departments, eq(correspondence.departmentId, departments.id))
+    .leftJoin(divisions, eq(correspondence.divisionId, divisions.id))
     .where(eq(correspondence.id, id))
 
   return result[0]
@@ -120,7 +120,7 @@ export async function createCorrespondence(formData: {
   senderOrganization?: string
   senderAddress?: string
   assignedToId?: number
-  departmentId?: number
+  divisionId?: number
   receivedDate: string
   dueDate: string
   notes?: string
@@ -147,7 +147,7 @@ export async function createCorrespondence(formData: {
       senderOrganization: formData.senderOrganization,
       senderAddress: formData.senderAddress,
       assignedToId: formData.assignedToId,
-      departmentId: formData.departmentId,
+      divisionId: formData.divisionId,
       receivedDate: new Date(formData.receivedDate),
       dueDate: new Date(formData.dueDate),
       notes: formData.notes,
@@ -169,22 +169,22 @@ export async function getUsers() {
       name: users.name,
       email: users.email,
       role: users.role,
-      department: users.department,
+      division: users.division,
     })
     .from(users)
     .where(eq(users.isActive, true))
     .orderBy(users.name)
 }
 
-// Get all departments
-export async function getDepartments() {
+// Get all divisions
+export async function getDivisions() {
   return await db
     .select({
-      id: departments.id,
-      name: departments.name,
-      code: departments.code,
-      description: departments.description,
+      id: divisions.id,
+      name: divisions.name,
+      code: divisions.code,
+      description: divisions.description,
     })
-    .from(departments)
-    .orderBy(departments.name)
+    .from(divisions)
+    .orderBy(divisions.name)
 }

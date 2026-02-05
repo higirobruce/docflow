@@ -10,13 +10,13 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   passwordHash: text('password_hash'),
   role: text('role').notNull().default('staff'),
-  department: text('department'),
+  division: text('division'),
   isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
 
-export const departments = pgTable('departments', {
+export const divisions = pgTable('divisions', {
   id: serial('id').primaryKey(),
   name: text('name').notNull().unique(),
   code: text('code').notNull().unique(),
@@ -38,7 +38,7 @@ export const correspondence = pgTable('correspondence', {
   senderOrganization: text('sender_organization'),
   senderAddress: text('sender_address'),
   assignedToId: integer('assigned_to_id').references(() => users.id),
-  departmentId: integer('department_id').references(() => departments.id),
+  divisionId: integer('division_id').references(() => divisions.id),
   receivedDate: timestamp('received_date').notNull().defaultNow(),
   dueDate: timestamp('due_date').notNull(),
   completedDate: timestamp('completed_date'),
@@ -86,7 +86,7 @@ export const slaRules = pgTable('sla_rules', {
   name: text('name').notNull(),
   correspondenceType: correspondenceTypeEnum('correspondence_type'),
   priority: priorityEnum('priority'),
-  departmentId: integer('department_id').references(() => departments.id),
+  divisionId: integer('division_id').references(() => divisions.id),
   responseDays: integer('response_days').notNull(),
   resolutionDays: integer('resolution_days').notNull(),
   isActive: boolean('is_active').notNull().default(true),

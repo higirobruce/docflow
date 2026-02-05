@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/src/db'
-import { correspondence, users, departments } from '@/src/db/schema'
+import { correspondence, users, divisions } from '@/src/db/schema'
 import { eq, desc } from 'drizzle-orm'
 import { auth } from '@/src/lib/auth'
 import { canMutate } from '@/src/lib/authorization'
@@ -30,17 +30,17 @@ export async function GET() {
           name: users.name,
           email: users.email,
         },
-        department: {
-          id: departments.id,
-          name: departments.name,
-          code: departments.code,
+        division: {
+          id: divisions.id,
+          name: divisions.name,
+          code: divisions.code,
         },
         createdAt: correspondence.createdAt,
         updatedAt: correspondence.updatedAt,
       })
       .from(correspondence)
       .leftJoin(users, eq(correspondence.assignedToId, users.id))
-      .leftJoin(departments, eq(correspondence.departmentId, departments.id))
+      .leftJoin(divisions, eq(correspondence.divisionId, divisions.id))
       .orderBy(desc(correspondence.createdAt))
 
     return NextResponse.json(result)
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
         completedDate: body.completedDate ? new Date(body.completedDate) : null,
         notes: body.notes,
         assignedToId: body.assignedToId || null,
-        departmentId: body.departmentId || null,
+        divisionId: body.divisionId || null,
       })
       .returning()
 

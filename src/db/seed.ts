@@ -1,5 +1,5 @@
 import { db } from './index'
-import { users, departments, correspondence, slaRules } from './schema'
+import { users, divisions, correspondence, slaRules } from './schema'
 import { addDays } from 'date-fns'
 import bcrypt from 'bcryptjs'
 
@@ -8,26 +8,26 @@ async function seed() {
 
   const defaultPassword = await bcrypt.hash('password123', 10)
 
-  const [adminDept, hrDept, itDept, financeDept] = await db
-    .insert(departments)
+  const [adminDiv, hrDiv, itDiv, financeDiv] = await db
+    .insert(divisions)
     .values([
-      { name: 'Administration', code: 'ADMIN', description: 'Administrative Department' },
-      { name: 'Human Resources', code: 'HR', description: 'Human Resources Department' },
-      { name: 'Information Technology', code: 'IT', description: 'IT Department' },
-      { name: 'Finance', code: 'FIN', description: 'Finance Department' },
+      { name: 'Administration', code: 'ADMIN', description: 'Administration Division' },
+      { name: 'Human Resources', code: 'HR', description: 'Human Resources Division' },
+      { name: 'Information Technology', code: 'IT', description: 'IT Division' },
+      { name: 'Finance', code: 'FIN', description: 'Finance Division' },
     ])
     .returning()
 
-  console.log('Departments seeded')
+  console.log('Divisions seeded')
 
   const [admin, manager1, staff1, staff2, staff3] = await db
     .insert(users)
     .values([
-      { name: 'Admin User', email: 'admin@example.com', passwordHash: defaultPassword, role: 'admin', department: 'Administration' },
-      { name: 'John Manager', email: 'john.manager@example.com', passwordHash: defaultPassword, role: 'manager', department: 'Administration' },
-      { name: 'Sarah Staff', email: 'sarah.staff@example.com', passwordHash: defaultPassword, role: 'staff', department: 'Human Resources' },
-      { name: 'Mike Staff', email: 'mike.staff@example.com', passwordHash: defaultPassword, role: 'staff', department: 'Information Technology' },
-      { name: 'Emily Staff', email: 'emily.staff@example.com', passwordHash: defaultPassword, role: 'staff', department: 'Finance' },
+      { name: 'Admin User', email: 'admin@example.com', passwordHash: defaultPassword, role: 'admin', division: 'Administration' },
+      { name: 'John Manager', email: 'john.manager@example.com', passwordHash: defaultPassword, role: 'manager', division: 'Administration' },
+      { name: 'Sarah Staff', email: 'sarah.staff@example.com', passwordHash: defaultPassword, role: 'staff', division: 'Human Resources' },
+      { name: 'Mike Staff', email: 'mike.staff@example.com', passwordHash: defaultPassword, role: 'staff', division: 'Information Technology' },
+      { name: 'Emily Staff', email: 'emily.staff@example.com', passwordHash: defaultPassword, role: 'staff', division: 'Finance' },
     ])
     .returning()
 
@@ -61,7 +61,7 @@ async function seed() {
         senderPhone: '+250788123456',
         senderOrganization: 'External Organization A',
         assignedToId: staff1.id,
-        departmentId: hrDept.id,
+        divisionId: hrDiv.id,
         receivedDate: addDays(today, -5),
         dueDate: addDays(today, 2),
         createdById: admin.id,
@@ -78,7 +78,7 @@ async function seed() {
         senderPhone: '+250788234567',
         senderOrganization: 'External Organization B',
         assignedToId: manager1.id,
-        departmentId: adminDept.id,
+        divisionId: adminDiv.id,
         receivedDate: today,
         dueDate: addDays(today, 5),
         createdById: admin.id,
@@ -93,7 +93,7 @@ async function seed() {
         senderName: 'Alice Johnson',
         senderEmail: 'alice.johnson@external.com',
         assignedToId: staff1.id,
-        departmentId: hrDept.id,
+        divisionId: hrDiv.id,
         receivedDate: addDays(today, -2),
         dueDate: addDays(today, 5),
         createdById: admin.id,

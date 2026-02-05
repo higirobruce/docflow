@@ -1,24 +1,24 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/src/db'
-import { departments } from '@/src/db/schema'
+import { divisions } from '@/src/db/schema'
 import { asc } from 'drizzle-orm'
 
 export async function GET() {
   try {
     const result = await db
       .select({
-        id: departments.id,
-        name: departments.name,
-        code: departments.code,
+        id: divisions.id,
+        name: divisions.name,
+        code: divisions.code,
       })
-      .from(departments)
-      .orderBy(asc(departments.name))
+      .from(divisions)
+      .orderBy(asc(divisions.name))
 
     return NextResponse.json(result)
   } catch (error) {
-    console.error('Error fetching departments:', error)
+    console.error('Error fetching divisions:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch departments' },
+      { error: 'Failed to fetch divisions' },
       { status: 500 }
     )
   }

@@ -28,6 +28,7 @@ import {
   Building,
   Send,
   Loader2,
+  Edit,
 } from 'lucide-react'
 import { formatDate } from '@/src/lib/date-utils'
 import { ParamValue } from 'next/dist/server/request/params'
@@ -54,7 +55,7 @@ interface Correspondence {
     name: string | null
     email: string | null
   } | null
-  department: {
+  division: {
     id: number | null
     name: string | null
     code: string | null
@@ -293,6 +294,14 @@ export default function CorrespondenceDetailPage() {
                       View and manage correspondence information
                     </CardDescription>
                   </div>
+                  {canEdit && (
+                    <Link href={`/correspondence/${paramsId}/edit`}>
+                      <Button variant="outline" size="sm">
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </CardHeader>
               <CardContent>
@@ -602,12 +611,12 @@ export default function CorrespondenceDetailPage() {
                     </div>
                   </div>
                 )}
-                {correspondence.department && (
+                {correspondence.division && (
                   <div className="flex items-start gap-3">
                     <Building className="h-5 w-5 text-muted-foreground mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-sm text-muted-foreground">Department</p>
-                      <p className="font-medium">{correspondence.department.name}</p>
+                      <p className="text-sm text-muted-foreground">Division</p>
+                      <p className="font-medium">{correspondence.division.name}</p>
                     </div>
                   </div>
                 )}

@@ -42,7 +42,7 @@ interface Correspondence {
     name: string | null
     email: string | null
   } | null
-  department: {
+  division: {
     id: number | null
     name: string | null
     code: string | null

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/src/db'
-import { correspondence, users, departments, activityLog } from '@/src/db/schema'
+import { correspondence, users, divisions, activityLog } from '@/src/db/schema'
 import { eq } from 'drizzle-orm'
 import { auth } from '@/src/lib/auth'
 import { canMutate } from '@/src/lib/authorization'
@@ -43,17 +43,17 @@ export async function GET(
           name: users.name,
           email: users.email,
         },
-        department: {
-          id: departments.id,
-          name: departments.name,
-          code: departments.code,
+        division: {
+          id: divisions.id,
+          name: divisions.name,
+          code: divisions.code,
         },
         createdAt: correspondence.createdAt,
         updatedAt: correspondence.updatedAt,
       })
       .from(correspondence)
       .leftJoin(users, eq(correspondence.assignedToId, users.id))
-      .leftJoin(departments, eq(correspondence.departmentId, departments.id))
+      .leftJoin(divisions, eq(correspondence.divisionId, divisions.id))
       .where(eq(correspondence.id, id))
 
     if (result.length === 0) {
@@ -105,12 +105,33 @@ export async function PATCH(
     }
 
     const updates: Record<string, unknown> = { updatedAt: new Date() }
+    
+    // Core fields
+    if (body.subject) updates.subject = body.subject
+    if (body.description) updates.description = body.description
+    if (body.type) updates.type = body.type
+    if (body.referenceNumber) updates.referenceNumber = body.referenceNumber
+    
+    // Status & Priority
     if (body.status) updates.status = body.status
     if (body.priority) updates.priority = body.priority
-    if (body.assignedToId !== undefined) updates.assignedToId = body.assignedToId || null
-    if (body.departmentId !== undefined) updates.departmentId = body.departmentId || null
-    if (body.notes !== undefined) updates.notes = body.notes
+    
+    // Sender Details
+    if (body.senderName) updates.senderName = body.senderName
+    if (body.senderEmail !== undefined) updates.senderEmail = body.senderEmail
+    if (body.senderPhone !== undefined) updates.senderPhone = body.senderPhone
+    if (body.senderOrganization !== undefined) updates.senderOrganization = body.senderOrganization
+    if (body.senderAddress !== undefined) updates.senderAddress = body.senderAddress
+    
+    // Dates
+    if (body.receivedDate) updates.receivedDate = new Date(body.receivedDate)
+    if (body.dueDate) updates.dueDate = new Date(body.dueDate)
     if (body.status === 'completed') updates.completedDate = new Date()
+
+    // Assignments & Notes
+    if (body.assignedToId !== undefined) updates.assignedToId = body.assignedToId || null
+    if (body.divisionId !== undefined) updates.divisionId = body.divisionId || null
+    if (body.notes !== undefined) updates.notes = body.notes
 
     const [updated] = await db
       .update(correspondence)
