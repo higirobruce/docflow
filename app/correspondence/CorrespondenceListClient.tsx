@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -301,16 +301,17 @@ export default function CorrespondenceListClient({ initialData }: Correspondence
                   if (items.length === 0) return null
                   const config = GROUP_CONFIG[group]
                   return (
-                    <GroupRows
-                      key={group}
-                      items={items}
-                      label={config.label}
-                      icon={config.icon}
-                      color={config.color}
-                      count={items.length}
-                      getPriorityBadge={getPriorityBadge}
-                      getStatusBadge={getStatusBadge}
-                    />
+                    <React.Fragment key={group}>
+                      <GroupRows
+                        items={items}
+                        label={config.label}
+                        icon={config.icon}
+                        color={config.color}
+                        count={items.length}
+                        getPriorityBadge={getPriorityBadge}
+                        getStatusBadge={getStatusBadge}
+                      />
+                    </React.Fragment>
                   )
                 })
               )}
