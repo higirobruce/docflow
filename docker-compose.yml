@@ -36,18 +36,18 @@ services:
       db:
         condition: service_healthy
 
-  https-portal:
-    image: steveltn/https-portal:1
-    ports:
-      - '80:80'
-      - '443:443'
-    links:
-      - app
-    restart: always
-    environment:
-      DOMAINS: 'test1.risa.gov.rw -> http://app:3000'
-      # STAGE: 'local' # Use 'production' for live certificates, 'local' for self-signed
-      STAGE: 'production'
+  # https-portal:
+  #   image: steveltn/https-portal:1
+  #   ports:
+  #     - '80:80'
+  #     - '443:443'
+  #   links:
+  #     - app
+  #   restart: always
+  #   environment:
+  #     DOMAINS: 'test1.risa.gov.rw -> http://app:3000'
+  #     # STAGE: 'local' # Use 'production' for live certificates, 'local' for self-signed
+  #     STAGE: 'production'
 
   # One-off service to push schema and seed data
   migrate:
@@ -66,3 +66,7 @@ services:
 
 volumes:
   pgdata:
+
+networks:
+  web:
+    external: true
