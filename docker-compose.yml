@@ -45,7 +45,7 @@ services:
       - app
     restart: always
     environment:
-      DOMAINS: 'user-management.risa.gov.rw -> http://app:3000'
+      DOMAINS: 'test1.risa.gov.rw -> http://app:3000'
       # STAGE: 'local' # Use 'production' for live certificates, 'local' for self-signed
       STAGE: 'production'
 
